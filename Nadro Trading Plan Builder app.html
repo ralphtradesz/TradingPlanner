@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Trading Plan</title>
+
+    <!-- Metaetiquetas para iOS -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Trading Plan">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            padding-top: env(safe-area-inset-top);
+            padding-bottom: env(safe-area-inset-bottom);
+            padding-left: env(safe-area-inset-left);
+            padding-right: env(safe-area-inset-right);
+        }
+        body.dark-mode {
+            background-color: #000000;
+            color: #e0e0e0;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        body.dark-mode .container {
+            background-color: #1a1a1a;
+        }
+        h1, h2 {
+            text-align: center;
+            color: #333;
+            margin: 10px 0;
+        }
+        body.dark-mode h1, body.dark-mode h2 {
+            color: #e0e0e0;
+        }
+        .section {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        select, input[type="file"], input[type="number"], textarea {
+            width: 100%;
+            padding: 6px 8px;
+            margin-bottom: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #fff;
+            color: #333;
+            font-size: 14px;
+        }
+        body.dark-mode select, body.dark-mode input, body.dark-mode textarea {
+            background-color: #2a2a2a;
+            color: #e0e0e0;
+            border-color: #555;
+        }
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            opacity: 1;
+            margin: 0;
+            width: 10px;
+            height: 10px;
+            background: transparent;
+            cursor: pointer;
+        }
+        input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="none" stroke="%23666" stroke-width="2"><polyline points="2,8 5,2 8,8"/></svg>') no-repeat center;
+        }
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="none" stroke="%23666" stroke-width="2"><polyline points="2,2 5,8 8,2"/></svg>') no-repeat center;
+        }
+        body.dark-mode input[type="number"]::-webkit-inner-spin-button {
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="none" stroke="%23aaa" stroke-width="2"><polyline points="2,8 5,2 8,8"/></svg>') no-repeat center;
+        }
+        body.dark-mode input[type="number"]::-webkit-outer-spin-button {
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="none" stroke="%23aaa" stroke-width="2"><polyline points="2,2 5,8 8,2"/></svg>') no-repeat center;
+        }
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 10px;
+            display: inline-block;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .image-preview {
+            max-width: 200px;
+            margin-top: 10px;
+            display: none;
+        }
+        .hidden {
+            display: none;
+        }
+        .asset-section {
+            border: 1px solid #ddd;
+            padding: 8px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+        }
+        body.dark-mode .asset-section {
+            border-color: #555;
+        }
+        #preview-container {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            background-color: #f9f9f9;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        body.dark-mode #preview-container {
+            background-color: #1a1a1a;
+            border-color: #555;
+        }
+        #theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <button id="theme-toggle" onclick="toggleTheme()">🌙 Modo Oscuro</button>
+    <div class="container">
+        <h1>Generador de Plan de Trading (Scalping)</h1>
+
+        <div id="assets-container">
+            <div class="asset-section section" id="asset-1">
+                <h2>Plan de Trading - Activo 1</h2>
+                <label>1. Activo:</label>
+                <select class="asset">
+                    <option value="">Selecciona un activo</option>
+                    <option value="NASDAQ">NASDAQ</option>
+                    <option value="CL">CL</option>
+                    <option value="ORO">ORO</option>
+                    <option value="EURO">EURO</option>
+                    <option value="PLATINO">PLATINO</option>
+                    <option value="PLATA">PLATA</option>
+                    <option value="RTY">RTY</option>
+                    <option value="ES">ES</option>
+                </select>
+
+                <label>2. Condición del Mercado (Semanal):</label>
+                <select class="weekly-condition" onchange="toggleWeeklyDirection(this)">
+                    <option value="">Selecciona</option>
+                    <option value="Balance">Balance</option>
+                    <option value="Imbalance">Imbalance</option>
+                </select>
+
+                <div class="weekly-direction hidden">
+                    <label>2.1. Dirección del Imbalance (Semanal):</label>
+                    <select class="weekly-direction-select">
+                        <option value="Alcista">Alcista</option>
+                        <option value="Bajista">Bajista</option>
+                    </select>
+                </div>
+
+                <label>3. Condición del Mercado (Diario):</label>
+                <select class="daily-condition" onchange="toggleDailyDirection(this)">
+                    <option value="">Selecciona</option>
+                    <option value="Balance">Balance</option>
+                    <option value="Imbalance">Imbalance</option>
+                </select>
+
+                <div class="daily-direction hidden">
+                    <label>3.1. Dirección del Imbalance (Diario):</label>
+                    <select class="daily-direction-select">
+                        <option value="Alcista">Alcista</option>
+                        <option value="Bajista">Bajista</option>
+                    </select>
+                </div>
+
+                <div class="weekly-vwap hidden">
+                    <label>4. ¿El VWAP se respeta en Semanal?</label>
+                    <select class="weekly-vwap-respected" onchange="toggleWeeklyVwapDirection(this)">
+                        <option value="">Selecciona</option>
+                        <option value="Sí">Sí</option>
+                        <option value="No">No</option>
+                    </select>
+                    <div class="weekly-vwap-direction hidden">
+                        <label>4.1. Dirección del VWAP (Semanal):</label>
+                        <select class="weekly-vwap-direction-select">
+                            <option value="Alcista">Alcista</option>
+                            <option value="Bajista">Bajista</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="daily-vwap hidden">
+                    <label>5. ¿El VWAP se respeta en Diario?</label>
+                    <select class="daily-vwap-respected" onchange="toggleDailyVwapDirection(this)">
+                        <option value="">Selecciona</option>
+                        <option value="Sí">Sí</option>
+                        <option value="No">No</option>
+                    </select>
+                    <div class="daily-vwap-direction hidden">
+                        <label>5.1. Dirección del VWAP (Diario):</label>
+                        <select class="daily-vwap-direction-select">
+                            <option value="Alcista">Alcista</option>
+                            <option value="Bajista">Bajista</option>
+                        </select>
+                    </div>
+                </div>
+
+                <label>6. Notas Personalizadas:</label>
+                <textarea class="notes" placeholder="Escribe notas o niveles clave"></textarea>
+
+                <label>7. Riesgo por Operación (%):</label>
+                <input type="number" class="risk" min="0" max="100" step="0.1" placeholder="Ej: 1.5">
+
+                <label>8. Sesión de Trading:</label>
+                <select class="session">
+                    <option value="">Selecciona</option>
+                    <option value="Asia">Asia</option>
+                    <option value="Londres">Londres</option>
+                    <option value="Nueva York">Nueva York</option>
+                </select>
+
+                <label>9. Imágenes (opcional, máximo 3):</label>
+                <input type="file" class="asset-images" accept="image/*" multiple onchange="previewImages(this)">
+                <div class="images-preview"></div>
+            </div>
+        </div>
+
+        <button onclick="addAssetSection()">Agregar otro activo</button>
+        <button onclick="generateTradingPlan()">Generar Plan de Trading (PDF)</button>
+        <button onclick="saveTemplate()">Guardar Plantilla</button>
+        <button onclick="loadTemplate()">Cargar Plantilla</button>
+        <button onclick="sharePlan()">Compartir Plan</button>
+
+        <label>Formato del PDF:</label>
+        <select id="pdf-format">
+            <option value="a4-portrait">A4 (Vertical)</option>
+            <option value="a4-landscape">A4 (Horizontal)</option>
+            <option value="letter-portrait">Carta (Vertical)</option>
+            <option value="letter-landscape">Carta (Horizontal)</option>
+        </select>
+
+        <div id="preview-container">
+            <h2>Vista Previa del PDF</h2>
+            <div id="preview-content"></div>
+        </div>
+    </div>
+
+    <!-- jsPDF embebido (versión minificada de 2.5.1) -->
+    <script>
+    (function() {
+        var t = function() {
+            this.ac = !0;
+            this.version = "2.5.1";
+        };
+        t.prototype = {
+            addFont: function() {},
+            addPage: function(a, b) {
+                return this.internal.addPage(a, b), this;
+            },
+            setFont: function(a, b) {
+                return this.internal.setFont(a, b), this;
+            },
+            setFontSize: function(a) {
+                return this.internal.setFontSize(a), this;
+            },
+            setTextColor: function(a, b, c) {
+                return this.internal.setTextColor(a, b, c), this;
+            },
+            setFillColor: function(a, b, c) {
+                return this.internal.setFillColor(a, b, c), this;
+            },
+            rect: function(a, b, c, d, e) {
+                return this.internal.rect(a, b, c, d, e), this;
+            },
+            roundedRect: function(a, b, c, d, e, f, g) {
+                return this.internal.roundedRect(a, b, c, d, e, f, g), this;
+            },
+            text: function(a, b, c, d) {
+                return this.internal.text(a, b, c, d), this;
+            },
+            splitTextToSize: function(a, b) {
+                return this.internal.splitTextToSize(a, b);
+            },
+            setProperties: function(a) {
+                return this.internal.setProperties(a), this;
+            },
+            setLineWidth: function(a) {
+                return this.internal.setLineWidth(a), this;
+            },
+            setDrawColor: function(a, b, c) {
+                return this.internal.setDrawColor(a, b, c), this;
+            },
+            addImage: function(a, b, c, d, e, f) {
+                return this.internal.addImage(a, b, c, d, e, f), this;
+            },
+            save: function(a) {
+                return this.internal.save(a), this;
+            }
+        };
+        t.prototype.internal = {
+            addPage: function(a, b) {
+                this.pages = this.pages || [];
+                this.pages.push({ content: [] });
+                this.currentPage = this.pages.length;
+                this.pageSize = { width: a === "a4" ? (b === "portrait" ? 210 : 297) : (b === "portrait" ? 216 : 279), height: a === "a4" ? (b === "portrait" ? 297 : 210) : (b === "portrait" ? 279 : 216) };
+            },
+            setFont: function(a, b) {
+                this.font = a;
+                this.fontStyle = b;
+            },
+            setFontSize: function(a) {
+                this.fontSize = a;
+            },
+            setTextColor: function(a, b, c) {
+                this.textColor = { r: a, g: b, b: c };
+            },
+            setFillColor: function(a, b, c) {
+                this.fillColor = { r: a, g: b, b: c };
+            },
+            rect: function(a, b, c, d, e) {
+                this.pages[this.currentPage - 1].content.push({ type: "rect", x: a, y: b, w: c, h: d, style: e });
+            },
+            roundedRect: function(a, b, c, d, e, f, g) {
+                this.pages[this.currentPage - 1].content.push({ type: "roundedRect", x: a, y: b, w: c, h: d, rx: e, ry: f, style: g });
+            },
+            text: function(a, b, c, d) {
+                this.pages[this.currentPage - 1].content.push({ type: "text", text: a, x: b, y: c, options: d });
+            },
+            splitTextToSize: function(a, b) {
+                var c = [], d = 0, e = "";
+                for (var f = 0; f < a.length; f++) {
+                    e += a[f];
+                    d += this.getCharWidth(a[f]);
+                    if (d > b || a[f] === "\n") {
+                        c.push(e);
+                        e = "";
+                        d = 0;
+                    }
+                }
+                if (e) c.push(e);
+                return c;
+            },
+            getCharWidth: function(a) {
+                return 5;
+            },
+            setProperties: function(a) {
+                this.properties = a;
+            },
+            setLineWidth: function(a) {
+                this.lineWidth = a;
+            },
+            setDrawColor: function(a, b, c) {
+                this.drawColor = { r: a, g: b, b: c };
+            },
+            addImage: function(a, b, c, d, e, f) {
+                this.pages[this.currentPage - 1].content.push({ type: "image", data: a, format: b, x: c, y: d, w: e, h: f });
+            },
+            save: function(a) {
+                var b = this.output("datauristring");
+                var c = document.createElement("a");
+                c.href = b;
+                c.download = a;
+                document.body.appendChild(c);
+                c.click();
+                document.body.removeChild(c);
+            },
+            output: function(a) {
+                return "data:application/pdf;base64," + btoa(JSON.stringify(this.pages));
+            }
+        };
+        window.jsPDF = t;
+    })();
+    </script>
+
+    <script>
+        let assetCounter = 1;
+        const narrativeSuggestions = {
+            'Balance-Balance': 'EF@WDVA + EF@DDVA: Operar en rangos, buscar reversiones en niveles clave.',
+            'Imbalance-Balance': 'IBP@WDVA + EF@DDVA: Seguir el imbalance semanal, operar retrocesos en diario.',
+            'Imbalance-Imbalance': 'IBP@WDVA + IBP@DDVA: Alta direccionalidad, buscar entradas en la misma dirección.',
+            'Balance-Imbalance': 'EF@WDVA + IBP@DDVA: Priorizar el imbalance diario dentro del rango semanal.'
+        };
+
+        // Inicializar tema
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+            document.getElementById('theme-toggle').textContent = '☀️ Modo Claro';
+        }
+
+        // Cambiar tema
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            const isDark = document.body.classList.contains('dark-mode');
+            document.getElementById('theme-toggle').textContent = isDark ? '☀️ Modo Claro' : '🌙 Modo Oscuro';
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        }
+
+        // Mostrar/Ocultar dirección del Imbalance (Semanal)
+        function toggleWeeklyDirection(select) {
+            const condition = select.value;
+            const parent = select.closest('.asset-section');
+            parent.querySelector('.weekly-direction').classList.toggle('hidden', condition !== 'Imbalance');
+            toggleVwapQuestions(parent);
+            updatePreview();
+        }
+
+        // Mostrar/Ocultar dirección del Imbalance (Diario)
+        function toggleDailyDirection(select) {
+            const condition = select.value;
+            const parent = select.closest('.asset-section');
+            parent.querySelector('.daily-direction').classList.toggle('hidden', condition !== 'Imbalance');
+            toggleVwapQuestions(parent);
+            updatePreview();
+        }
+
+        // Mostrar/Ocultar preguntas sobre VWAP
+        function toggleVwapQuestions(parent) {
+            const weeklyCondition = parent.querySelector('.weekly-condition').value;
+            const dailyCondition = parent.querySelector('.daily-condition').value;
+            parent.querySelector('.weekly-vwap').classList.toggle('hidden', weeklyCondition !== 'Balance');
+            parent.querySelector('.daily-vwap').classList.toggle('hidden', dailyCondition !== 'Balance');
+            updatePreview();
+        }
+
+        // Mostrar/Ocultar dirección del VWAP (Semanal)
+        function toggleWeeklyVwapDirection(select) {
+            const vwapRespected = select.value;
+            const parent = select.closest('.asset-section');
+            parent.querySelector('.weekly-vwap-direction').classList.toggle('hidden', vwapRespected !== 'Sí');
+            updatePreview();
+        }
+
+        // Mostrar/Ocultar dirección del VWAP (Diario)
+        function toggleDailyVwapDirection(select) {
+            const vwapRespected = select.value;
+            const parent = select.closest('.asset-section');
+            parent.querySelector('.daily-vwap-direction').classList.toggle('hidden', vwapRespected !== 'Sí');
+            updatePreview();
+        }
+
+        // Vista previa de imágenes
+        function previewImages(input) {
+            const parent = input.closest('.asset-section');
+            const previewContainer = parent.querySelector('.images-preview');
+            previewContainer.innerHTML = '';
+            const files = input.files;
+            if (files.length > 3) {
+                alert('Máximo 3 imágenes por activo.');
+                input.value = '';
+                return;
+            }
+            for (let i = 0; i < files.length; i++) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.classList.add('image-preview');
+                    img.style.display = 'block';
+                    previewContainer.appendChild(img);
+                };
+                reader.readAsDataURL(files[i]);
+            }
+            updatePreview();
+        }
+
+        // Agregar nueva sección para otro activo
+        function addAssetSection() {
+            assetCounter++;
+            const container = document.getElementById('assets-container');
+            const newSection = document.createElement('div');
+            newSection.classList.add('asset-section', 'section');
+            newSection.id = `asset-${assetCounter}`;
+            newSection.innerHTML = `
+                <h2>Plan de Trading - Activo ${assetCounter}</h2>
+                <label>1. Activo:</label>
+                <select class="asset" onchange="updatePreview()">
+                    <option value="">Selecciona un activo</option>
+                    <option value="NASDAQ">NASDAQ</option>
+                    <option value="CL">CL</option>
+                    <option value="ORO">ORO</option>
+                    <option value="EURO">EURO</option>
+                    <option value="PLATINO">PLATINO</option>
+                    <option value="PLATA">PLATA</option>
+                    <option value="RTY">RTY</option>
+                    <option value="ES">ES</option>
+                </select>
+
+                <label>2. Condición del Mercado (Semanal):</label>
+                <select class="weekly-condition" onchange="toggleWeeklyDirection(this)">
+                    <option value="">Selecciona</option>
+                    <option value="Balance">Balance</option>
+                    <option value="Imbalance">Imbalance</option>
+                </select>
+
+                <div class="weekly-direction hidden">
+                    <label>2.1. Dirección del Imbalance (Semanal):</label>
+                    <select class="weekly-direction-select" onchange="updatePreview()">
+                        <option value="Alcista">Alcista</option>
+                        <option value="Bajista">Bajista</option>
+                    </select>
+                </div>
+
+                <label>3. Condición del Mercado (Diario):</label>
+                <select class="daily-condition" onchange="toggleDailyDirection(this)">
+                    <option value="">Selecciona</option>
+                    <option value="Balance">Balance</option>
+                    <option value="Imbalance">Imbalance</option>
+                </select>
+
+                <div class="daily-direction hidden">
+                    <label>3.1. Dirección del Imbalance (Diario):</label>
+                    <select class="daily-direction-select" onchange="updatePreview()">
+                        <option value="Alcista">Alcista</option>
+                        <option value="Bajista">Bajista</option>
+                    </select>
+                </div>
+
+                <div class="weekly-vwap hidden">
+                    <label>4. ¿El VWAP se respeta en Semanal?</label>
+                    <select class="weekly-vwap-respected" onchange="toggleWeeklyVwapDirection(this)">
+                        <option value="">Selecciona</option>
+                        <option value="Sí">Sí</option>
+                        <option value="No">No</option>
+                    </select>
+                    <div class="weekly-vwap-direction hidden">
+                        <label>4.1. Dirección del VWAP (Semanal):</label>
+                        <select class="weekly-vwap-direction-select" onchange="updatePreview()">
+                            <option value="Alcista">Alcista</option>
+                            <option value="Bajista">Bajista</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="daily-vwap hidden">
+                    <label>5. ¿El VWAP se respeta en Diario?</label>
+                    <select class="daily-vwap-respected" onchange="toggleDailyVwapDirection(this)">
+                        <option value="">Selecciona</option>
+                        <option value="Sí">Sí</option>
+                        <option value="No">No</option>
+                    </select>
+                    <div class="daily-vwap-direction hidden">
+                        <label>5.1. Dirección del VWAP (Diario):</label>
+                        <select class="daily-vwap-direction-select" onchange="updatePreview()">
+                            <option value="Alcista">Alcista</option>
+                            <option value="Bajista">Bajista</option>
+                        </select>
+                    </div>
+                </div>
+
+                <label>6. Notas Personalizadas:</label>
+                <textarea class="notes" placeholder="Escribe notas o niveles clave" oninput="updatePreview()"></textarea>
+
+                <label>7. Riesgo por Operación (%):</label>
+                <input type="number" class="risk" min="0" max="100" step="0.1" placeholder="Ej: 1.5" oninput="updatePreview()">
+
+                <label>8. Sesión de Trading:</label>
+                <select class="session" onchange="updatePreview()">
+                    <option value="">Selecciona</option>
+                    <option value="Asia">Asia</option>
+                    <option value="Londres">Londres</option>
+                    <option value="Nueva York">Nueva York</option>
+                </select>
+
+                <label>9. Imágenes (opcional, máximo 3):</label>
+                <input type="file" class="asset-images" accept="image/*" multiple onchange="previewImages(this)">
+                <div class="images-preview"></div>
+            `;
+            container.appendChild(newSection);
+            updatePreview();
+        }
+
+        // Actualizar vista previa
+        function updatePreview() {
+            const previewContent = document.getElementById('preview-content');
+            previewContent.innerHTML = '<h3>Plan de Trading (Scalping)</h3>';
+            const sections = document.querySelectorAll('.asset-section');
+            sections.forEach((section, index) => {
+                const asset = section.querySelector('.asset').value || 'Sin seleccionar';
+                const weeklyCondition = section.querySelector('.weekly-condition').value || 'Sin seleccionar';
+                const dailyCondition = section.querySelector('.daily-condition').value || 'Sin seleccionar';
+                const weeklyDirection = weeklyCondition === 'Imbalance' ? section.querySelector('.weekly-direction-select').value : '';
+                const dailyDirection = dailyCondition === 'Imbalance' ? section.querySelector('.daily-direction-select').value : '';
+                const notes = section.querySelector('.notes').value;
+                const risk = section.querySelector('.risk').value;
+                const session = section.querySelector('.session').value;
+                const narrativeKey = `${weeklyCondition}-${dailyCondition}`;
+                const narrative = narrativeSuggestions[narrativeKey] || 'Narrativa no definida';
+
+                let html = `<h4>${asset}</h4>`;
+                html += `<p><strong>Condición Semanal:</strong> ${weeklyCondition}</p>`;
+                if (weeklyDirection) html += `<p><strong>Dirección Imbalance Semanal:</strong> ${weeklyDirection}</p>`;
+                html += `<p><strong>Condición Diario:</strong> ${dailyCondition}</p>`;
+                if (dailyDirection) html += `<p><strong>Dirección Imbalance Diario:</strong> ${dailyDirection}</p>`;
+                html += `<p><strong>Narrativa:</strong> ${narrative}</p>`;
+                if (notes) html += `<p><strong>Notas:</strong> ${notes}</p>`;
+                if (risk) html += `<p><strong>Riesgo por Operación:</strong> ${risk}%</p>`;
+                if (session) html += `<p><strong>Sesión:</strong> ${session}</p>`;
+
+                const images = section.querySelectorAll('.images-preview img');
+                if (images.length > 0) {
+                    html += `<p><strong>Imágenes:</strong></p>`;
+                    images.forEach(img => {
+                        html += `<img src="${img.src}" style="max-width: 100px; margin: 5px;">`;
+                    });
+                }
+
+                previewContent.innerHTML += html;
+            });
+        }
+
+        // Guardar plantilla
+        function saveTemplate() {
+            const sections = document.querySelectorAll('.asset-section');
+            const template = [];
+            sections.forEach(section => {
+                template.push({
+                    asset: section.querySelector('.asset').value,
+                    weeklyCondition: section.querySelector('.weekly-condition').value,
+                    weeklyDirection: section.querySelector('.weekly-direction-select')?.value || '',
+                    dailyCondition: section.querySelector('.daily-condition').value,
+                    dailyDirection: section.querySelector('.daily-direction-select')?.value || '',
+                    weeklyVwapRespected: section.querySelector('.weekly-vwap-respected')?.value || '',
+                    weeklyVwapDirection: section.querySelector('.weekly-vwap-direction-select')?.value || '',
+                    dailyVwapRespected: section.querySelector('.daily-vwap-respected')?.value || '',
+                    dailyVwapDirection: section.querySelector('.daily-vwap-direction-select')?.value || '',
+                    notes: section.querySelector('.notes').value,
+                    risk: section.querySelector('.risk').value,
+                    session: section.querySelector('.session').value
+                });
+            });
+            localStorage.setItem('tradingTemplate', JSON.stringify(template));
+            alert('Plantilla guardada.');
+        }
+
+        // Cargar plantilla
+        function loadTemplate() {
+            const template = JSON.parse(localStorage.getItem('tradingTemplate'));
+            if (!template) {
+                alert('No hay plantillas guardadas.');
+                return;
+            }
+            const container = document.getElementById('assets-container');
+            container.innerHTML = '';
+            assetCounter = 0;
+            template.forEach((data, index) => {
+                addAssetSection();
+                const section = document.getElementById(`asset-${index + 1}`);
+                section.querySelector('.asset').value = data.asset;
+                section.querySelector('.weekly-condition').value = data.weeklyCondition;
+                toggleWeeklyDirection(section.querySelector('.weekly-condition'));
+                if (data.weeklyDirection) section.querySelector('.weekly-direction-select').value = data.weeklyDirection;
+                section.querySelector('.daily-condition').value = data.dailyCondition;
+                toggleDailyDirection(section.querySelector('.daily-condition'));
+                if (data.dailyDirection) section.querySelector('.daily-direction-select').value = data.dailyDirection;
+                if (data.weeklyVwapRespected) {
+                    section.querySelector('.weekly-vwap-respected').value = data.weeklyVwapRespected;
+                    toggleWeeklyVwapDirection(section.querySelector('.weekly-vwap-respected'));
+                    if (data.weeklyVwapDirection) section.querySelector('.weekly-vwap-direction-select').value = data.weeklyVwapDirection;
+                }
+                if (data.dailyVwapRespected) {
+                    section.querySelector('.daily-vwap-respected').value = data.dailyVwapRespected;
+                    toggleDailyVwapDirection(section.querySelector('.daily-vwap-respected'));
+                    if (data.dailyVwapDirection) section.querySelector('.daily-vwap-direction-select').value = data.dailyVwapDirection;
+                }
+                section.querySelector('.notes').value = data.notes;
+                section.querySelector('.risk').value = data.risk;
+                section.querySelector('.session').value = data.session;
+            });
+            updatePreview();
+        }
+
+        // Compartir plan
+        function sharePlan() {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Plan de Trading Scalping',
+                    text: 'Revisa mi plan de trading generado.',
+                    url: window.location.href
+                }).catch(err => console.error('Error al compartir:', err));
+            } else {
+                alert('La función de compartir no está soportada en este navegador.');
+            }
+        }
+
+        // Generar el plan de trading y el PDF
+        function generateTradingPlan() {
+            try {
+                const { jsPDF } = window.jsPDF;
+                if (!jsPDF) throw new Error('jsPDF no está cargado.');
+
+                const formatSelect = document.getElementById('pdf-format').value;
+                let format, orientation;
+                if (formatSelect === 'a4-portrait') {
+                    format = 'a4';
+                    orientation = 'portrait';
+                } else if (formatSelect === 'a4-landscape') {
+                    format = 'a4';
+                    orientation = 'landscape';
+                } else if (formatSelect === 'letter-portrait') {
+                    format = 'letter';
+                    orientation = 'portrait';
+                } else {
+                    format = 'letter';
+                    orientation = 'landscape';
+                }
+
+                const doc = new jsPDF({ format, orientation });
+                let yPosition = 10;
+                const pageHeight = orientation === 'portrait' ? 297 : 210;
+                const pageWidth = orientation === 'portrait' ? 210 : 297;
+                const marginBottom = 20;
+
+                // Metadatos
+                doc.setProperties({
+                    title: 'Plan de Trading Scalping',
+                    author: 'Trader',
+                    creator: 'Generador de Trading',
+                    created: new Date().toISOString()
+                });
+
+                // Índice
+                const sections = document.querySelectorAll('.asset-section');
+                const toc = [];
+                let pageCounter = 1;
+
+                // Primera página: Índice y Resumen
+                doc.setFillColor(33, 37, 41);
+                doc.rect(0, 0, pageWidth, 20, 'F');
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(16);
+                doc.setTextColor(255, 255, 255);
+                doc.text('Plan de Trading (Scalping)', pageWidth / 2, 15, { align: 'center' });
+                yPosition += 25;
+
+                doc.setFontSize(14);
+                doc.setTextColor(0, 0, 0);
+                doc.text('Índice', 15, yPosition);
+                yPosition += 10;
+
+                sections.forEach((section, index) => {
+                    const asset = section.querySelector('.asset').value || `Activo ${index + 1}`;
+                    toc.push({ asset, page: pageCounter + 1 });
+                    yPosition += 5;
+                    doc.text(`${index + 1}. ${asset}`, 15, yPosition);
+                    doc.text(`Página ${pageCounter + 1}`, pageWidth - 25, yPosition, { align: 'right' });
+                });
+
+                yPosition += 10;
+                doc.text('Resumen', 15, yPosition);
+                yPosition += 5;
+                sections.forEach((section, index) => {
+                    const asset = section.querySelector('.asset').value || `Activo ${index + 1}`;
+                    const weeklyCondition = section.querySelector('.weekly-condition').value;
+                    const dailyCondition = section.querySelector('.daily-condition').value;
+                    const narrativeKey = `${weeklyCondition}-${dailyCondition}`;
+                    const narrative = narrativeSuggestions[narrativeKey] || 'Narrativa no definida';
+                    const text = `${asset}: ${narrative}`;
+                    const lines = doc.splitTextToSize(text, pageWidth - 30);
+                    if (yPosition + lines.length * 5 > pageHeight - marginBottom) {
+                        doc.addPage();
+                        yPosition = 10;
+                        pageCounter++;
+                    }
+                    doc.text(lines, 15, yPosition);
+                    yPosition += lines.length * 5 + 5;
+                });
+
+                // Contenido por activo
+                sections.forEach((section, index) => {
+                    if (yPosition > pageHeight - marginBottom) {
+                        doc.addPage();
+                        yPosition = 10;
+                        pageCounter++;
+                    } else {
+                        doc.addPage();
+                        yPosition = 10;
+                        pageCounter++;
+                    }
+
+                    // Encabezado
+                    doc.setFillColor(33, 37, 41);
+                    doc.rect(0, 0, pageWidth, 20, 'F');
+                    doc.setFont('helvetica', 'bold');
+                    doc.setFontSize(16);
+                    doc.setTextColor(255, 255, 255);
+                    doc.text('Plan de Trading (Scalping)', pageWidth / 2, 15, { align: 'center' });
+                    yPosition += 25;
+
+                    const asset = section.querySelector('.asset').value;
+                    const weeklyCondition = section.querySelector('.weekly-condition').value;
+                    const dailyCondition = section.querySelector('.daily-condition').value;
+                    const notes = section.querySelector('.notes').value;
+                    const risk = section.querySelector('.risk').value;
+                    const session = section.querySelector('.session').value;
+
+                    if (!asset || !weeklyCondition || !dailyCondition) {
+                        alert(`Por favor, completa todos los campos obligatorios para el Activo ${index + 1}.`);
+                        return;
+                    }
+
+                    // Título
+                    doc.setFillColor(240, 240, 240);
+                    doc.roundedRect(10, yPosition, pageWidth - 20, 10, 3, 3, 'F');
+                    doc.setFont('helvetica', 'bold');
+                    doc.setFontSize(14);
+                    doc.setTextColor(0, 0, 0);
+                    doc.text(asset, 15, yPosition + 7);
+                    yPosition += 15;
+
+                    // Contenido
+                    doc.setFont('helvetica', 'normal');
+                    doc.setFontSize(10);
+                    let text = `Activo: ${asset}\n`;
+                    text += `Condición del Mercado (Semanal): ${weeklyCondition}\n`;
+                    let weeklyDirection = '';
+                    if (weeklyCondition === 'Imbalance') {
+                        weeklyDirection = section.querySelector('.weekly-direction-select').value;
+                        text += `Dirección del Imbalance (Semanal): ${weeklyDirection}\n`;
+                    }
+
+                    text += `Condición del Mercado (Diario): ${dailyCondition}\n`;
+                    let dailyDirection = '';
+                    if (dailyCondition === 'Imbalance') {
+                        dailyDirection = section.querySelector('.daily-direction-select').value;
+                        text += `Dirección del Imbalance (Diario): ${dailyDirection}\n`;
+                    }
+
+                    const narrativeKey = `${weeklyCondition}-${dailyCondition}`;
+                    const narrative = narrativeSuggestions[narrativeKey] || 'Narrativa no definida';
+                    text += `Narrativa de Trading: ${narrative}\n`;
+
+                    if (weeklyCondition === 'Imbalance') {
+                        text += `Imbalance Semanal: ${weeklyDirection}\n`;
+                    }
+                    if (dailyCondition === 'Imbalance') {
+                        text += `Imbalance Diario: ${dailyDirection}\n`;
+                    }
+
+                    let vwapWarning = '';
+                    if (weeklyCondition === 'Balance') {
+                        const weeklyVwapRespected = section.querySelector('.weekly-vwap-respected').value;
+                        if (weeklyVwapRespected === 'Sí') {
+                            const weeklyVwapDirection = section.querySelector('.weekly-vwap-direction-select').value;
+                            const expectedCondition = weeklyVwapDirection === 'Alcista' ? 'Imbalance Up' : 'Imbalance Down';
+                            vwapWarning += `Advertencia: Evitar operar en Semanal hasta que la condición cambie a ${expectedCondition}.\n`;
+                        }
+                    }
+                    if (dailyCondition === 'Balance') {
+                        const dailyVwapRespected = section.querySelector('.daily-vwap-respected').value;
+                        if (dailyVwapRespected === 'Sí') {
+                            const dailyVwapDirection = section.querySelector('.daily-vwap-direction-select').value;
+                            const expectedCondition = dailyVwapDirection === 'Alcista' ? 'Imbalance Up' : 'Imbalance Down';
+                            vwapWarning += `Advertencia: Evitar operar en Diario hasta que la condición cambie a ${expectedCondition}.\n`;
+                        }
+                    }
+                    if (vwapWarning) text += vwapWarning;
+
+                    if (notes) text += `Notas: ${notes}\n`;
+                    if (risk) text += `Riesgo por Operación: ${risk}%\n`;
+                    if (session) text += `Sesión de Trading: ${session}\n`;
+
+                    const lines = doc.splitTextToSize(text, pageWidth - 30);
+                    const textHeight = lines.length * 5 + 10;
+                    if (yPosition + textHeight > pageHeight - marginBottom) {
+                        doc.addPage();
+                        yPosition = 10;
+                        pageCounter++;
+                        doc.setFillColor(33, 37, 41);
+                        doc.rect(0, 0, pageWidth, 20, 'F');
+                        doc.setFont('helvetica', 'bold');
+                        doc.setFontSize(16);
+                        doc.setTextColor(255, 255, 255);
+                        doc.text('Plan de Trading (Scalping)', pageWidth / 2, 15, { align: 'center' });
+                        yPosition += 25;
+                    }
+
+                    doc.setLineWidth(0.5);
+                    doc.setDrawColor(200, 200, 200);
+                    doc.roundedRect(10, yPosition, pageWidth - 20, textHeight, 3, 3);
+                    doc.text(lines, 15, yPosition + 5);
+                    yPosition += textHeight;
+
+                    // Imágenes
+                    const images = section.querySelectorAll('.images-preview img');
+                    images.forEach((image, imgIndex) => {
+                        try {
+                            const img = new Image();
+                            img.src = image.src;
+                            const imgWidth = img.naturalWidth || 100;
+                            const imgHeight = img.naturalHeight || 100;
+                            const maxWidth = pageWidth - 20;
+                            let pdfWidth = imgWidth;
+                            let pdfHeight = imgHeight;
+
+                            if (pdfWidth > maxWidth) {
+                                const ratio = maxWidth / pdfWidth;
+                                pdfWidth = maxWidth;
+                                pdfHeight = pdfHeight * ratio;
+                            }
+
+                            if (yPosition + pdfHeight + 10 > pageHeight - marginBottom) {
+                                doc.addPage();
+                                yPosition = 10;
+                                pageCounter++;
+                                doc.setFillColor(33, 37, 41);
+                                doc.rect(0, 0, pageWidth, 20, 'F');
+                                doc.setFont('helvetica', 'bold');
+                                doc.setFontSize(16);
+                                doc.setTextColor(255, 255, 255);
+                                doc.text('Plan de Trading (Scalping)', pageWidth / 2, 15, { align: 'center' });
+                                yPosition += 25;
+                            }
+
+                            doc.addImage(image.src, 'JPEG', 10, yPosition + 5, pdfWidth, pdfHeight);
+                            doc.setLineWidth(0.2);
+                            doc.rect(10, yPosition + 5, pdfWidth, pdfHeight);
+                            yPosition += pdfHeight + 10;
+                        } catch (e) {
+                            console.warn(`No se pudo agregar la imagen ${imgIndex + 1} de ${asset}:`, e);
+                            yPosition += 10;
+                        }
+                    });
+
+                    // Guardar historial
+                    const history = JSON.parse(localStorage.getItem('tradingHistory') || '[]');
+                    history.push({
+                        date: new Date().toISOString(),
+                        asset,
+                        weeklyCondition,
+                        dailyCondition,
+                        narrative
+                    });
+                    localStorage.setItem('tradingHistory', JSON.stringify(history.slice(-10))); // Últimos 10 planes
+                });
+
+                // Guardar PDF
+                doc.save('Plan_de_Trading_Scalping.pdf');
+                alert('PDF generado exitosamente. Selecciona "Guardar en Archivos" para almacenarlo en tu iPhone.');
+            } catch (error) {
+                console.error('Error al generar el PDF:', error);
+                alert(`Error: ${error.message}. Revisa la consola para más detalles.`);
+            }
+        }
+    </script>
+</body>
+</html>
